@@ -36,7 +36,7 @@ app.use(notFound);
 app.use(errorHandler);
 app.use(
   cors({
-    origin: "*"
+    origin: "https://ochade-shop.netlify.app",
   })
 );
 
