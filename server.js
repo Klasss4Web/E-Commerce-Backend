@@ -18,6 +18,9 @@ dotenv.config();
 connectToDataBase();
 const app = express();
 app.use(express.json());
+app.use(
+  cors()
+);
 
 // API
 app.use("/api/import", importData);
@@ -34,11 +37,7 @@ app.get("/api/config/paypal", (req, res) => {
 //ERROR HANDLER
 app.use(notFound);
 app.use(errorHandler);
-app.use(
-  cors({
-    origin: "https://ochade-shop.netlify.app",
-  })
-);
+
 
 // //GET PRODUCTS
 // app.get("/api/products", (req, res) => {
