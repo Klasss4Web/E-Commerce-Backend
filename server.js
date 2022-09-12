@@ -1,5 +1,6 @@
 import express from "express";
 // import products from "./data/product.js";
+import cors from "cors"
 import dotenv from "dotenv";
 import connectToDataBase from "./config/mongodb.js";
 import importData from "./dataImport.js";
@@ -33,6 +34,11 @@ app.get("/api/config/paypal", (req, res) => {
 //ERROR HANDLER
 app.use(notFound);
 app.use(errorHandler);
+app.use(
+  cors({
+    origin: "https://my-commerce-backend.herokuapp.com",
+  })
+);
 
 // //GET PRODUCTS
 // app.get("/api/products", (req, res) => {
