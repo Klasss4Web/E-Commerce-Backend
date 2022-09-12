@@ -35,9 +35,7 @@ app.get("/api/config/paypal", (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 app.use(
-  cors({
-    origin: "https://my-commerce-backend.herokuapp.com",
-  })
+  cors()
 );
 
 // //GET PRODUCTS
