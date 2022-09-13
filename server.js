@@ -1,6 +1,6 @@
 import express from "express";
 // import products from "./data/product.js";
-import cors from "cors"
+import cors from "cors";
 import dotenv from "dotenv";
 import connectToDataBase from "./config/mongodb.js";
 import importData from "./dataImport.js";
@@ -12,15 +12,16 @@ import merchantRoute from "./routes/merchantRoute.js";
 import categoriesRoute from "./routes/categoriesRoutes.js";
 import notificationRoute from "./routes/notificationRoutes.js";
 
-
-
 dotenv.config();
 connectToDataBase();
 const app = express();
 app.use(express.json());
-app.use(
-  cors()
-);
+app.use(cors());
+// app.use(
+//   cors({
+//     origin: "https://ochade-shop.netlify.app",
+//   })
+// );
 
 // API
 app.use("/api/import", importData);
@@ -37,7 +38,6 @@ app.get("/api/config/paypal", (req, res) => {
 //ERROR HANDLER
 app.use(notFound);
 app.use(errorHandler);
-
 
 // //GET PRODUCTS
 // app.get("/api/products", (req, res) => {
