@@ -68,7 +68,7 @@ settingsRoute.post(
   })
 );
 
-//PROFILE
+//ADMIN GET COMPANY PROFILE
 settingsRoute.get(
   "/company-profile",
   protect,
@@ -79,6 +79,31 @@ settingsRoute.get(
 
     if (companyDetails) {
       res.json(companyDetails[0]);
+    } else {
+      res.status(404);
+      throw new Error("Organisation not found");
+    }
+  })
+);
+
+//GET COMPANY PROFILE
+settingsRoute.get(
+  "/company-details",
+  // protect,
+  // adminOnly,
+  asyncHandler(async (req, res) => {
+    // res.send("User Profile")
+    const companyDetails = await Settings.find({});
+
+    if (companyDetails) {
+      res.json({
+        companyName: companyDetails[0]?.companyName,
+        companyEmail: companyDetails[0]?.companyEmail,
+        companyPhone: companyDetails[0]?.companyPhone,
+        primaryColor: companyDetails[0]?.primaryColor,
+        secondaryColor: companyDetails[0]?.secondaryColor,
+        logo: companyDetails[0]?.logo,
+      });
     } else {
       res.status(404);
       throw new Error("Organisation not found");
@@ -97,7 +122,8 @@ settingsRoute.put(
 
     if (organisation) {
       organisation.companyName = req?.body?.companyName || organisation?.name;
-      organisation.companyEmail = req?.body?.companyEmail || organisation?.email;
+      organisation.companyEmail =
+        req?.body?.companyEmail || organisation?.email;
       organisation.logo = req?.body?.logo || organisation?.logo;
       if (req.body.primaryColor) {
         organisation.primaryColor = req.body.primaryColor;
