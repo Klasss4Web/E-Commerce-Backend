@@ -3,8 +3,16 @@ import asyncHandler from "express-async-handler";
 import { adminOnly, protect } from "../middleware/authMidedleware.js";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import sgMail from "@sendgrid/mail"
 
 const userRoute = express.Router();
+
+const API_KEY =
+  "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";
+
+sgMail.setApiKey(API_KEY);
+
+
 
 //LOGIN
 userRoute.post(
@@ -61,6 +69,24 @@ userRoute.post(
         createdAt: user?.createdAt,
         token: generateToken(user?._id),
       });
+
+
+      const message = {
+        to: email,
+        from: {
+          name: "Ochade's Ecommerce",
+          email: "eochade15@gmail.com",
+        },
+        message: "Account creation on Ochade's commerce",
+        text: "Your account have been successfully created",
+      };
+
+      sgMail.send(message)
+        .then(response => {
+          console.log("response", response, "Email sent")
+        })
+        .catch(error => console.log("Error sending mail", error.response))
+
     } else {
       res.status(400);
       throw new Error("Invalid user data");

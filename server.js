@@ -11,6 +11,8 @@ import orderRoute from "./routes/orderRoute.js";
 import merchantRoute from "./routes/merchantRoute.js";
 import categoriesRoute from "./routes/categoriesRoutes.js";
 import notificationRoute from "./routes/notificationRoutes.js";
+import settingsRoute from "./routes/settingsRoute.js";
+// import sgMail from "@sendgrid/mail";
 
 dotenv.config();
 connectToDataBase();
@@ -23,6 +25,8 @@ app.use(cors());
 //   })
 // );
 
+// export const sendMail = sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 // API
 app.use("/api/import", importData);
 app.use("/api/products", productRoute);
@@ -30,6 +34,7 @@ app.use("/api/users", userRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/merchants", merchantRoute);
 app.use("/api/categories", categoriesRoute);
+app.use("/api/settings", settingsRoute);
 app.use("/api/notifications", notificationRoute);
 app.get("/api/config/paypal", (req, res) => {
   res.send(process.env.PAYPAL_CLIENT_ID);
