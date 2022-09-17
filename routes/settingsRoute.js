@@ -78,7 +78,7 @@ settingsRoute.get(
     const companyDetails = await Settings.find({});
 
     if (companyDetails) {
-      res.json(companyDetails);
+      res.json(companyDetails[0]);
     } else {
       res.status(404);
       throw new Error("Organisation not found");
