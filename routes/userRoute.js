@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 import { adminOnly, protect } from "../middleware/authMidedleware.js";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
-import sgMail from "@sendgrid/mail"
+import sgMail from "@sendgrid/mail";
 
 const userRoute = express.Router();
 
@@ -11,8 +11,6 @@ const API_KEY =
   "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";
 
 sgMail.setApiKey(API_KEY);
-
-
 
 //LOGIN
 userRoute.post(
@@ -45,7 +43,6 @@ userRoute.post(
     const { name, email, password } = req.body;
     const userExists = await User.findOne({ email });
 
-
     if (userExists) {
       res.status(400);
       throw new Error("User already exists");
@@ -55,7 +52,6 @@ userRoute.post(
       name,
       email,
       password,
-
     });
 
     if (user) {
@@ -70,7 +66,6 @@ userRoute.post(
         token: generateToken(user?._id),
       });
 
-
       const message = {
         to: email,
         from: {
@@ -81,12 +76,12 @@ userRoute.post(
         text: "Your account have been successfully created",
       };
 
-      sgMail.send(message)
-        .then(response => {
-          console.log("response", response, "Email sent")
+      sgMail
+        .send(message)
+        .then((response) => {
+          console.log("response", response, "Email sent");
         })
-        .catch(error => console.log("Error sending mail", error.response))
-
+        .catch((error) => console.log("Error sending mail", error.response));
     } else {
       res.status(400);
       throw new Error("Invalid user data");
@@ -103,7 +98,7 @@ userRoute.post(
     const { name, email, password, userType, image } = req.body;
     const userExists = await User.findOne({ email });
 
-    const isAdmin = userType === "admin" ?  true : false
+    const isAdmin = userType === "admin" ? true : false;
 
     if (userExists) {
       res.status(400);
@@ -116,7 +111,7 @@ userRoute.post(
       image,
       isAdmin,
       password,
-      userType
+      userType,
     });
 
     if (user) {
@@ -172,7 +167,7 @@ userRoute.put(
     if (user) {
       user.name = req?.body?.name || user?.name;
       user.email = req?.body?.email || user?.email;
-      user.image = req?.body?.image || user?.image
+      user.image = req?.body?.image || user?.image;
       if (req.body.password) {
         user.password = req.body.password;
       }
@@ -204,7 +199,7 @@ userRoute.put(
     if (user) {
       user.name = req?.body?.name || user?.name;
       user.email = req?.body?.email || user?.email;
-      user.image = req?.body?.image || user?.image
+      user.image = req?.body?.image || user?.image;
       if (req.body.password) {
         user.password = req.body.password;
       }
@@ -224,7 +219,50 @@ userRoute.put(
   })
 );
 
+//UPDATE USER STATUS: BAN AND UNBAN
+userRoute.put(
+  "/:id",
+  protect,
+  adminOnly,
+  asyncHandler(async (req, res) => {
+    const { status } = req.body;
+    const user = await User.findById(req.params.id);
 
+    if (user) {
+      user.status = status;
+
+      const updateUserStatus = await user.save();
+      res.json({
+        _id: updateUserStatus._id,
+        name: updateUserStatus.name,
+        email: updateUserStatus.email,
+        status: updateUserStatus.status,
+        isAdmin: updateUserStatus.isAdmin,
+        createdAt: updateUserStatus.createdAt,
+      });
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
+  })
+);
+
+//DELETE USER: ADMIN ONLY ACCESS
+userRoute.delete(
+  "/:id",
+  protect,
+  adminOnly,
+  asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      await user.remove();
+      res.json({ message: "User deleted successfully" });
+    } else {
+      res.status(404);
+      throw new Error("User Not Found");
+    }
+  })
+);
 
 //GET ALL USER: ADMIN ONLY ACCESS
 userRoute.get(

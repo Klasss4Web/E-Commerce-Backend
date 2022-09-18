@@ -32,9 +32,14 @@ const userSchema = mongoose.Schema(
       default: false,
     },
     userType: {
-      type: "String",
+      type: String,
       required: false,
       default: "user",
+    },
+    status: {
+      type: String,
+      required: false,
+      default: "active",
     },
   },
   {
