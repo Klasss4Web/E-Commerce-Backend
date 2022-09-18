@@ -20,15 +20,20 @@ userRoute.post(
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-      res.status(200).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        userType: user.userType,
-        createdAt: user.createdAt,
-        token: generateToken(user._id),
-      });
+      if(user?.status.toLowerCase() === "active") {
+        res.status(200).json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          isAdmin: user.isAdmin,
+          userType: user.userType,
+          createdAt: user.createdAt,
+          token: generateToken(user._id),
+        });
+      } else {
+        res.status(401)
+        throw new Error(`Your account is ${user?.status}, contact admin`)
+      }
     } else {
       res.status(401);
       throw new Error("Invalid Email or Password");
